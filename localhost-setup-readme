@@ -1,0 +1,49 @@
+## Multilingual localhost setup
+To set up localhost test environment, virtual hosts should be created for each domain / locale.
+
+For example, you want to view your site by visiting:
+
+http://localhost/silverstripe-site
+http://localhost-fr/silverstripe-site
+http://localhost-de/silverstripe-site
+
+
+Basic MAMP instructions:
+1.  open terminal, sudo nano /private/etc/hosts
+2.  create a alternative localhost for each language, for example, add:
+	
+	127.0.0.1	localhost-de
+	127.0.0.1	localhost-jp
+	
+3.  exit (ctrl+x, and save)
+4.  create a text file: /Application/MAMP/conf/apache/vhosts.conf
+5.  add a VirtualHost block for each new domain, should look something like this:
+
+<VirtualHost *:port>
+    ServerName localhost-domain
+    DocumentRoot /path/to/www/root/
+    <Directory /path/to/www/root/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
+</VirtualHost>
+
+5a.  Replace 'localhost-domain' with your localhost (example: localhost-de)
+
+5b.  Replace 'port' to match your port (80 for default, 8888 for alternative)..  if you dont know what this is, open MAMP control panel, open preferences, select Ports, and use the apache port.
+
+5c.  Replace '/path/to/www/root/' with the absolute path to your local www root.  default MAMP path is '/Applications/MAMP/htdocs/', could be '/Users/[you]/Sites'.  if you dont know what this is, copy this from MAMP control panel -> preferences -> Apache -> Document Root.
+
+6.  Open /Applications/MAMP/conf/apache/httpd.conf
+7.  at the end of the document, add the following:
+
+NameVirtualHost *:port
+Include /Applications/MAMP/conf/apache/vhosts.conf
+
+8.  Replace 'port' with the apache port you are using.
+
+9.  Restart MAMP.
+
+10. test new localhost-domains (http://localhost-de:8888/).  you should see the same thing as http://localhost:8888/

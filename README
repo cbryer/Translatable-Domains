@@ -1,0 +1,28 @@
+# Translatable-Domains
+
+## Introduction
+
+Allows developer to specify which what language a domain should use and will force urls to use the translated records whenever possible.
+Also allows developer to register multiple virtualhosts to test multilingual domains locally.
+
+## Requirements
+
+ * SilverStripe 2.4 or newer, 
+
+
+
+## Installation
+
+ * Copy the `Translatable-Domains` directory into your main SilverStripe webroot
+ * This should go in your `mysite/_config.php` or `Translatable-Domains/_config.php`.
+
+	TranslatableDomains::addDomainHandler('tld','locale');
+
+ * replace tld with the top level domain you wish to force to a specific locale (com, fr, de, co.uk, etc)
+ * replace locale with the locale you wish the top level domain to use.
+ * run /dev/build
+
+## Known issues:
+ * currently only supports different top level domains with the same domain name.  the module can change mysite.com to mysite.de, but not anothersite.de.
+
+
