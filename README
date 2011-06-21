@@ -22,7 +22,6 @@ Also allows developer to register multiple virtualhosts to test multilingual dom
  * replace locale with the locale you wish the top level domain to use.
  * run /dev/build
 
-## Known issues:
- * currently only supports different top level domains with the same domain name.  the module can change mysite.com to mysite.de, but not anothersite.de.
+
 
 
