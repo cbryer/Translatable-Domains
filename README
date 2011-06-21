@@ -1,16 +1,16 @@
-<h1>Translatable-Domains</h1>
+## Translatable-Domains
 
-<h2>Introduction</h2>
+## Introduction
 
 Allows developer to specify which what language a domain should use and will force urls to use the translated records whenever possible.
 Also allows developer to register multiple virtualhosts to test multilingual domains locally.
 
-<h2>Requirements</h2>
+## Requirements
 
  * SilverStripe 2.4 or newer, 
 
 
-<h2>Installation</h2>
+## Installation
 
  * Copy the `Translatable-Domains` directory into your main SilverStripe webroot
  * This should go in your `mysite/_config.php` or `Translatable-Domains/_config.php`.
@@ -21,6 +21,6 @@ Also allows developer to register multiple virtualhosts to test multilingual dom
  * replace locale with the locale you wish the top level domain to use.
  * run /dev/build
 
-<h2> Testing multilingual sites on localhost:</h2>
+## Testing multilingual sites on localhost:
 
 testing multilingual sites on localhost is possible through setting up multiple virtual hosts.  for quick instructions, read localhost-setup-readme
