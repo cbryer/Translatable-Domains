@@ -21,13 +21,6 @@ class TranslatableDomains{
 		//tld(.com, .net, .co.uk, etc) => locale(en_US, etc)
 	);
 	
-	/**
-	 * localhost_domain_locale_map
-	 * Arrays of virtualhosts that map to locales.
-	 */
-	static $localhost_domain_locale_map = array(
-		//tld(.com, .net, .co.uk, etc) => locale(en_US, etc)
-	);
 	
 	/**
 	 * addDomainHandler
@@ -43,45 +36,6 @@ class TranslatableDomains{
 		self::$domain_locale_map[$domain] = $locale;
 	}
 	
-	/**
-	 * addLocalhostDomainHandler
-	 * Method to add virtualhosts and locales to the {@link localhost_domain_locale_map}.
-	 * errors will be thrown if developer tries to add the same tld more than once.
-	 * 
-	 * @param string $domain one virtualhost (localhost, localhost-en, etc)
-	 * @param string $locale one locale that should be mapped to the $domain param.
-	 */
-	
-	function addLocalhostDomainHandler($domain, $locale){
-		if(isset(self::$localhost_domain_locale_map[$domain])) user_error("Overwriting domain", E_USER_WARNING);
-		self::$localhost_domain_locale_map[$domain] = $locale;
-	}
-	
-	
-	
-	/**
-	 * isLocalHost
-	 * Checks to see if we are running on localhost 
-	 * or a defined localhost-alternate. 
-	 *
-	 * @return Boolean True if current server is running localhost registered 
-	 * using {@addLocalhostDomainHandler} or has localhost in the url.
-	 *
-	 */
-
-	function isLocalHost(){
-		$host  = $_SERVER["HTTP_HOST"];
-		if(preg_match("/localhost/", $_SERVER["HTTP_HOST"])) return true;
-		
-		foreach (self::$localhost_domain_locale_map as $str => $val) {
-		//check each $localhost_domain_locale_map key for the tld..
-			if(preg_match('/^'.$str.'(:[0-9]+)?$/',$host)){
-				return true;
-		    }
-		}
-		return false;
-	}
-	
 	
 	
 	/**
@@ -89,41 +43,55 @@ class TranslatableDomains{
 	 * finds the tld from the server (www.mysite.com = com), then returns 
 	 * the locale from the tld in the array $domain_locale_map 
 	 *
-	 * EXAMPLE: current site is www.mysite.com
-	 *			look up com in domain_locale_map / localhost_domain_locale_map
+	 * uses {@getLocaleFromURL} to look up the tld from the server.
 	 *	
-	 * @return locale associated with com: en_US (or whatever developer specifies)
+	 * @return locale associated with the current top level domain.
 	 *
 	 */
 	
 	public function getLocaleFromHost(){
-		$locale = i18n::default_locale();
-		//be able to return default locale if nothing is found.
-		$host  = $_SERVER["HTTP_HOST"];
-		if(self::isLocalHost()){
-			foreach (self::$localhost_domain_locale_map as $str => $val) {
-			//check each $localhost_domain_locale_map key for the tld..
-				if(preg_match('/^'.$str.'(:[0-9]+)?$/',$host)){
-				//if its a match, stop and return the locale
-					$locale = $val;
-					break;
-			    }
-			}
-		}else{ 
-			foreach (self::$domain_locale_map as $str => $val) {
-			//check each $domain_locale_map key for the tld..
-				if(preg_match('/^(.*)(\.'.$str.')$/',$host)){
-				//if its a match, stop and return the locale
-					$locale = $val;
-					break;
-			    }
-			}
-		}
+		$locale = self::getLocaleFromURL($_SERVER["HTTP_HOST"]);
 		return $locale;
 	}
 	
+	/**
+	 * getLocaleFromURL
+	 * finds the locale of the url passed into the function, and returns the associated locale
+	 *
+	 * @param string $host URL used to retrieve tld from.
+	 * @return locale associated with tld: (.de == de_DE)
+	 *
+	 */
 	
+	public function getLocaleFromURL($host){
+		$locale = i18n::default_locale();
+		//be able to return default locale if nothing is found.
+		
+		if($tld = self::getTLD($host)) $locale = self::$domain_locale_map[$tld];
+		return $locale;
+	}
 	
+	/**
+	 * getTLD
+	 * finds the tld from the host parameter (www.mysite.com = com) 
+	 *
+	 * @param string $host URL used to retrieve tld from.
+	 * @return tld associated with com: en_US (or whatever developer specifies)
+	 *
+	 */
+	
+	public function getTLD($host){
+		foreach (self::$domain_locale_map as $tld => $locale) {
+			//check each $domain_locale_map key for the tld..
+			//if(preg_match('/^(.*)\b'.$tld.'\b(:[0-9]+)?/',$host)){
+			if(preg_match('!^(.*)\b'.$tld.'\b(/.*$)?!',$host)){
+				//if its a match, stop and return the tld
+				return $tld;
+		    }
+		}
+		//user_error("No Top Level Domain found", E_USER_WARNING);
+		return null;
+	}
 	
 	/**
 	 * convertLocaleToTLD
@@ -143,33 +111,19 @@ class TranslatableDomains{
 	 
 	 
 	public function convertLocaleToTLD($withEndSlash=true){
-		$host  = $_SERVER["HTTP_HOST"];
-		$currentLocale = Translatable::get_current_locale();
-		$tld;
-		
-		if(self::isLocalHost()){
-			$tld = Director::protocol().array_search($currentLocale, self::$localhost_domain_locale_map);
-			
-			if(preg_match('/:[0-9]+$/',$host)){
-				// add the port if one is used
-				$tld .= substr($host,strpos($host, ':'));
-			}
-		} else{
-			//if live, switch the tld.
-			$domain = Director::protocol().$_SERVER['SERVER_NAME'];
-			
-			foreach (self::$domain_locale_map as $str => $val) {
-			// look through domain_locale_map to match current tld..  
-			// (need to do this instead of substr incase tld = .co.uk)
-				
-				if(preg_match('/^(.*)(\.'.$str.')$/',$host)){
-					$domain = substr($domain, 0, strripos($domain, $str));
-					break;
-				}
-			}
-			$ext = array_search($currentLocale, self::$domain_locale_map);
-			$tld = $domain.$ext;
-		}
+		$tld = self::setDomainByPageLocale($_SERVER["HTTP_HOST"]);
 		return ($withEndSlash) ? $tld.'/' : $tld;
+	}
+	
+	
+	
+	public function setDomainByPageLocale($host){
+		if($tld = self::getTLD($host)){
+			$currentLocale = Translatable::get_current_locale();
+			$domain = Director::protocolAndHost();
+			$domain = substr($domain, 0, strripos($domain, $tld));
+			$ext = array_search($currentLocale, self::$domain_locale_map);
+			return $domain.$ext;
+		}
 	}
 }

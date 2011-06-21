@@ -1,0 +1,44 @@
+Page:
+	home:
+		Title: Home
+		URLSegment: home
+		Locale: en_US
+	homeDE:
+		Title: Home
+		URLSegment: home-de
+		Locale: de_DE
+	homeGB:
+		Title: Home
+		URLSegment: home-gb
+		Locale: en_GB  
+	homeJP:
+		Title: Home
+		URLSegment: home-jp
+		Locale: ja_JP
+	homeIT:
+		Title: Home
+		URLSegment: home-it
+		Locale: it_IT
+	homeFR:
+		Title: Home
+		URLSegment: home-fr
+		Locale: fr_FR
+SiteTree_translationgroups:
+	1:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.home
+	2:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.homeDE
+	3:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.homeGB
+	4:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.homeJP
+	4:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.homeIT
+	4:
+		TranslationGroupID: =>Page.home
+		OriginalID: =>Page.homeFR

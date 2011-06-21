@@ -29,14 +29,12 @@ class SingleLocaleDomain extends DataObjectDecorator{
 			
 			//find the correct locale
 			$curLoc = TranslatableDomains::getLocaleFromHost();
-		
 			// compare page locale vs domain's locale
 			// low occurance of these not matching, but important
 			
 			if(Translatable::get_current_locale() != $curLoc){
-				
 				// check to see if the page has a translation for the url, if so, translate.
-				// helpful for homepages where going to / shows /home but we want german translation..
+				// helpful for homepages where / == /home but we want the german translation..
 				
 				if($this->owner->hasTranslation($curLoc)){
 					//if page exists and translation exists, redirect & show translation	
@@ -44,7 +42,7 @@ class SingleLocaleDomain extends DataObjectDecorator{
 					Director::redirect($correctPage->Link());
 				} else {
 					//otherwise, find requested page by url, determine locale, and put us in the right domain.
-					$newUrl = substr(TranslatableDomains::convertLocaleToTLD(), 0, -1).$this->owner->Link();
+					$newUrl = TranslatableDomains::convertLocaleToTLD($withEndSlash=false).$this->owner->Link();
 					Director::redirect($newUrl);
 				}
 			} else i18n::set_locale($this->owner->Locale);

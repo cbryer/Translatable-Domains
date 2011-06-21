@@ -16,8 +16,8 @@ Basic MAMP instructions:
 	127.0.0.1	localhost-jp
 	
 3.  exit (ctrl+x, and save)
-4.  create a text file: /Application/MAMP/conf/apache/vhosts.conf
-5.  add a VirtualHost block for each new domain, should look something like this:
+4.  create a text file: touch /Application/MAMP/conf/apache/vhosts.conf
+5.  In the new vhosts.conf file, add a VirtualHost block for each new domain, should look something like this:
 
 <VirtualHost *:port>
     ServerName localhost-domain
