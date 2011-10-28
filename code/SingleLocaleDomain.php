@@ -11,6 +11,26 @@
 class SingleLocaleDomain extends DataObjectDecorator{
 	
 	/**
+	 * ignored_url_segments
+	 * Array of URLSegments to exclude from domain-locale rules
+	 * ex. we need to ignore security from rules, otherwise pages that require login to view content
+	 * will redirect to default locale's domain and viewing content would not be possible.
+	 *
+	 */
+	 
+	static $ignored_url_segments = array(
+		'Security',
+		'dev',
+		'admin'
+	);
+	
+	public function addIgnoredURLSegment($urlSegment=null){
+		if(!in_array($urlSegment, self::$ignored_url_segments)) $ignored_url_segments[] = $urlSegment;
+	}
+	
+	
+	
+	/**
 	 * ContentController
 	 * lets us extend init() through this method on SiteTree.
 	 * we will override page init to change domains if the page locale is 
@@ -22,17 +42,17 @@ class SingleLocaleDomain extends DataObjectDecorator{
 	 *		¥ i18n locale that is in the header.
 	 *
 	 */
+	 
 	
 	public function contentcontrollerInit(){
 	 
 		if($this->owner->hasExtension('Translatable')){
-			
 			//find the correct locale
 			$curLoc = TranslatableDomains::getLocaleFromHost();
 			// compare page locale vs domain's locale
 			// low occurance of these not matching, but important
 			
-			if(Translatable::get_current_locale() != $curLoc){
+			if(Translatable::get_current_locale() != $curLoc && !in_array($this->owner->URLSegment, self::$ignored_url_segments)){
 				// check to see if the page has a translation for the url, if so, translate.
 				// helpful for homepages where / == /home but we want the german translation..
 				
@@ -49,6 +69,10 @@ class SingleLocaleDomain extends DataObjectDecorator{
 		}
 	}
 	
+	function alternateAbsoluteLink($action=null) {
+		$segment = ($action) ? "/".$action : '';
+		return TranslatableDomains::convertLocaleToTLD($withEndSlash=false).$this->owner->Link().$segment;
+	}
 	
 	/**
 	 * other helpful utility methods
