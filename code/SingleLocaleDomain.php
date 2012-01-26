@@ -37,9 +37,9 @@ class SingleLocaleDomain extends DataObjectDecorator{
 	 * different than the detected locale of the domain.
 	 *
 	 * 3 Things to be aware of (while developing..  these are all accounted for here):
-	 *		¥ Intended Locale of the Domain (.fr, .de, .com?)
-	 *		¥ Page's Locale in the Database
-	 *		¥ i18n locale that is in the header.
+	 *		ï¿½ Intended Locale of the Domain (.fr, .de, .com?)
+	 *		ï¿½ Page's Locale in the Database
+	 *		ï¿½ i18n locale that is in the header.
 	 *
 	 */
 	 
@@ -69,9 +69,17 @@ class SingleLocaleDomain extends DataObjectDecorator{
 		}
 	}
 	
+	
+	/**
+         * alternateAbsoluteLink
+         * changes absoluteLink() to include the correct domain.
+         * commonly used in language switchers and when viewing draft / published pages in the CMS
+	 * 
+	 */
+	
 	function alternateAbsoluteLink($action=null) {
 		$segment = ($action) ? "/".$action : '';
-		return TranslatableDomains::convertLocaleToTLD($withEndSlash=false).$this->owner->Link().$segment;
+		return TranslatableDomains::convertLocaleToTLD($withEndSlash=false).Director::baseURL().$this->owner->URLSegment.'/'.$segment;
 	}
 	
 	/**
