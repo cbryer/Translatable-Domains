@@ -9,14 +9,14 @@ http://localhost-de/silverstripe-site
 
 
 Basic MAMP instructions:
-1.  open terminal, sudo nano /private/etc/hosts
+1.  open terminal, sudo nano /private/etc/hosts (WAMP: C:\Windows\System32\drivers\etc\hosts\)
 2.  create a alternative localhost for each language, for example, add:
 	
 	127.0.0.1	localhost-de
 	127.0.0.1	localhost-jp
 	
 3.  exit (ctrl+x, and save)
-4.  create a text file: touch /Application/MAMP/conf/apache/vhosts.conf
+4.  create a text file: touch /Application/MAMP/conf/apache/vhosts.conf (WAMP: C:\wamp\bin\apache\apache2.2.22\conf\vhosts.conf)
 5.  In the new vhosts.conf file, add a VirtualHost block for each new domain, should look something like this:
 
 <VirtualHost *:port>
