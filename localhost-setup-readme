@@ -9,7 +9,7 @@ http://localhost-de/silverstripe-site
 
 
 Basic MAMP instructions:
-1.  open terminal, sudo nano /private/etc/hosts (WAMP: C:\Windows\System32\drivers\etc\hosts\)
+1.  open terminal, sudo nano /private/etc/hosts (WAMP: C:\Windows\System32\drivers\etc\hosts)
 2.  create a alternative localhost for each language, for example, add:
 	
 	127.0.0.1	localhost-de
