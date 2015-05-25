@@ -63,7 +63,11 @@ class SingleLocaleDomain extends DataObjectDecorator{
 				} else {
 					//otherwise, find requested page by url, determine locale, and put us in the right domain.
 					$newUrl = TranslatableDomains::convertLocaleToTLD($withEndSlash=false).$this->owner->Link();
-					Director::redirect($newUrl);
+					// redirect only if specific domain is set for locale allows 'catch-all' 
+					// behaviour (on default domain) --> how to set default domain?
+					if( TranslatableDomains::convertLocaleToTLD(false) ){
+						Director::redirect($newUrl);
+					}
 				}
 			} else i18n::set_locale($this->owner->Locale);
 		}
